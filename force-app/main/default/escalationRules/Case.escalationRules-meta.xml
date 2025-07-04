@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EscalationRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <escalationRule>
+        <fullName>Escalate Support Cases</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <businessHours>Default</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+            <formula>AND(
+  ISPICKVAL(Priority, &quot;High&quot;),
+  NOT(ISPICKVAL(Status, &quot;Closed&quot;)),
+  (NOW() - CreatedDate) * 24 &gt;= 12
+)</formula>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Default</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+            <formula>AND(
+  ISPICKVAL(Priority, &quot;Medium&quot;),
+  NOT(ISPICKVAL(Status, &quot;Closed&quot;)),
+  (NOW() - CreatedDate) * 24 &gt;= 24
+)</formula>
+        </ruleEntry>
+        <ruleEntry>
+            <businessHours>Default</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+            <formula>AND(
+  ISPICKVAL(Priority, &quot;Low&quot;),
+  NOT(ISPICKVAL(Status, &quot;Closed&quot;)),
+  (NOW() - CreatedDate) * 24 &gt;= 48
+)</formula>
+        </ruleEntry>
+    </escalationRule>
+</EscalationRules>
