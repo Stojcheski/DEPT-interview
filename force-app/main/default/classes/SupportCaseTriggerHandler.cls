@@ -77,7 +77,10 @@ public with sharing class SupportCaseTriggerHandler {
                 
                 caseRecord.First_Name__c = relatedContact.FirstName;
                 caseRecord.Last_Name__c = relatedContact.LastName;
-                caseRecord.Start_date__c = Date.today();              
+                // Since the requirement is: Should be auto populated with the Created Date, I assume it's meant only in insert scenarios
+                if(Trigger.isInsert){
+                    caseRecord.Start_date__c = Date.today(); 
+                }         
             }
         }
     }

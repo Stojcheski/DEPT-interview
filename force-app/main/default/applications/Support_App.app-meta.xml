@@ -13,6 +13,8 @@
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Support App</label>
     <navType>Standard</navType>
+    <tabs>Support_Case__c</tabs>
+    <tabs>Customer_Satisfaction__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Support_App_UtilityBar</utilityBar>
 </CustomApplication>
