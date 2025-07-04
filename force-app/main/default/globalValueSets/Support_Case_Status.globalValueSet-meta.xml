@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>New</fullName>
+        <default>false</default>
+        <label>New</label>
+    </customValue>
+    <customValue>
+        <fullName>Open</fullName>
+        <default>false</default>
+        <label>Open</label>
+    </customValue>
+    <customValue>
+        <fullName>In progress</fullName>
+        <default>false</default>
+        <label>In progress</label>
+    </customValue>
+    <customValue>
+        <fullName>Waiting on customer</fullName>
+        <default>false</default>
+        <label>Waiting on customer</label>
+    </customValue>
+    <customValue>
+        <fullName>Resolved</fullName>
+        <default>false</default>
+        <label>Resolved</label>
+    </customValue>
+    <customValue>
+        <fullName>On Hold</fullName>
+        <default>false</default>
+        <label>On Hold</label>
+    </customValue>
+    <description>List of Support Case statuses</description>
+    <masterLabel>Support Case Status</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

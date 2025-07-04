@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Phone</fullName>
+        <default>false</default>
+        <label>Phone</label>
+    </customValue>
+    <customValue>
+        <fullName>Email</fullName>
+        <default>false</default>
+        <label>Email</label>
+    </customValue>
+    <customValue>
+        <fullName>Support portal</fullName>
+        <default>false</default>
+        <label>Support portal</label>
+    </customValue>
+    <description>List of Case Origins for Support Cases</description>
+    <masterLabel>Support Case Case Origin</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

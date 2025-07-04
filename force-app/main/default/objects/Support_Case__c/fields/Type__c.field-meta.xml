@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Type__c</fullName>
+    <description>Type of Support Case that can be created. The name of the records depends on the type:
+If incident - 1000n - example 100001, 100002, etc
+If Complaint - 2000n - example 200001, 200002, etc
+If Question - 3000n - example 300001, 300002, etc
+If Request New - 4000n - example 400001, 400002, etc</description>
+    <label>Type</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Support_Case_Types</valueSetName>
+    </valueSet>
+</CustomField>

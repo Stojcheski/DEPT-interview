@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Incident</fullName>
+        <default>false</default>
+        <label>Incident</label>
+    </customValue>
+    <customValue>
+        <fullName>Complaint</fullName>
+        <default>false</default>
+        <label>Complaint</label>
+    </customValue>
+    <customValue>
+        <fullName>Question</fullName>
+        <default>false</default>
+        <label>Question</label>
+    </customValue>
+    <customValue>
+        <fullName>Request new</fullName>
+        <default>false</default>
+        <label>Request new</label>
+    </customValue>
+    <description>Types of Support Cases that can be created</description>
+    <masterLabel>Support Case Types</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

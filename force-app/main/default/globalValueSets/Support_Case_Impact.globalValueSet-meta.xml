@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Disruption in service</fullName>
+        <default>false</default>
+        <label>Disruption in service</label>
+    </customValue>
+    <customValue>
+        <fullName>Low impact bug</fullName>
+        <default>false</default>
+        <label>Low impact bug</label>
+    </customValue>
+    <customValue>
+        <fullName>High impact bug</fullName>
+        <default>false</default>
+        <label>High impact bug</label>
+    </customValue>
+    <customValue>
+        <fullName>No impact</fullName>
+        <default>false</default>
+        <label>No impact</label>
+    </customValue>
+    <description>List of Support Case Impacts</description>
+    <masterLabel>Support Case Impact</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
