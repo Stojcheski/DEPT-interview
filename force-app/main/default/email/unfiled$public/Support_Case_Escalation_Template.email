@@ -1,0 +1,15 @@
+Dear Support,
+
+Support Case with {!Support_Case__c.Priority__c} has been escalated.
+
+Name: {!Support_Case__c.Name}
+Subject: {!Support_Case__c.Subject__c}
+Type: {!Support_Case__c.Type__c}
+Impact: {!Support_Case__c.Impact__c}
+Priority: {!Support_Case__c.Priority__c}
+Status: {!Support_Case__c.Status__c}
+
+Please have a look.
+
+Best regards,
+Automated Escalation

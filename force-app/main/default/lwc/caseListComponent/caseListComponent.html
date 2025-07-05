@@ -1,0 +1,110 @@
+<template>
+    <lightning-card title={cardTitle} icon-name="custom:custom63">
+        <div slot="actions">
+            <lightning-button
+                label="Refresh"
+                icon-name="utility:refresh"
+                onclick={refreshData}
+                disabled={isLoading}>
+            </lightning-button>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="slds-p-horizontal_medium slds-p-vertical_small">
+            <!-- View Mode Selector (Managers Only) -->
+            <div if:true={showViewModeSelector} class="slds-grid slds-gutters slds-wrap slds-m-bottom_small">
+                <div class="slds-col slds-size_1-of-1">
+                    <lightning-radio-group
+                        label="View Mode"
+                        options={viewModeOptions}
+                        value={viewMode}
+                        onchange={handleViewModeChange}
+                        type="button">
+                    </lightning-radio-group>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-gutters slds-wrap">
+                <!-- Search Input -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <lightning-input
+                        type="search"
+                        label="Search Cases"
+                        placeholder="Search by case number, subject, or contact..."
+                        value={searchKey}
+                        onchange={handleSearch}>
+                    </lightning-input>
+                </div>
+                
+                <!-- Priority Filter -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <lightning-combobox
+                        label="Filter by Priority"
+                        value={selectedPriority}
+                        options={priorityOptions}
+                        onchange={handlePriorityChange}>
+                    </lightning-combobox>
+                </div>
+                
+                <!-- Status Filter -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <lightning-combobox
+                        label="Filter by Status"
+                        value={selectedStatus}
+                        options={statusOptions}
+                        onchange={handleStatusChange}>
+                    </lightning-combobox>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading Spinner -->
+        <div if:true={isLoading} class="slds-p-around_medium">
+            <lightning-spinner alternative-text="Loading cases..." size="medium"></lightning-spinner>
+        </div>
+        
+        <!-- Error Message -->
+        <div if:true={error} class="slds-p-around_medium">
+            <lightning-card>
+                <div class="slds-text-color_error slds-text-align_center">
+                    <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_small"></lightning-icon>
+                    Error loading cases: {error.body.message}
+                </div>
+            </lightning-card>
+        </div>
+        
+        <!-- Data Table -->
+        <div if:true={hasData} class="slds-p-horizontal_medium">
+            <lightning-datatable
+                key-field="Id"
+                data={filteredCases}
+                columns={columns}
+                onrowaction={handleRowAction}
+                onsort={handleSort}
+                sorted-by={sortBy}
+                sorted-direction={sortDirection}
+                hide-checkbox-column="true"
+                show-row-number-column="true"
+                resize-column-disabled="false"
+                max-row-selection="1">
+            </lightning-datatable>
+        </div>
+        
+        <!-- No Data Message -->
+        <div if:false={hasData} class="slds-p-around_medium">
+            <div class="slds-text-align_center slds-text-color_weak">
+                <lightning-icon icon-name="utility:info" size="small" class="slds-m-right_small"></lightning-icon>
+                {noDataMessage}
+            </div>
+        </div>
+        
+        <!-- Case Summary -->
+        <div if:true={hasData} class="slds-p-horizontal_medium slds-p-vertical_small">
+            <div class="slds-grid slds-gutters slds-text-body_small slds-text-color_weak">
+                <div class="slds-col">
+                    Showing {filteredCases.length} of {cases.length} cases
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

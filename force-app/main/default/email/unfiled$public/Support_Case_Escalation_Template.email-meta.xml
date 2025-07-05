@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Template used for notifying users or queues for escalated support cases</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Support Case Escalation Template</name>
+    <style>none</style>
+    <subject>{!Support_Case__c.Priority__c} Support Case has been escalated</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

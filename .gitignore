@@ -45,4 +45,4 @@ $RECYCLE.BIN/
 **/venv/
 
 # PMD Cache
-.pmd-cache
+.pmdCache

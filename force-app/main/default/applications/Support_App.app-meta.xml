@@ -15,6 +15,7 @@
     <navType>Standard</navType>
     <tabs>Support_Case__c</tabs>
     <tabs>Customer_Satisfaction__c</tabs>
+    <tabs>Support_App_Page</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Support_App_UtilityBar</utilityBar>
 </CustomApplication>

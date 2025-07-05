@@ -423,4 +423,88 @@ public class SupportCaseTriggerHandlerTest {
         List<Support_Case__c> updatedCase = [SELECT Id, Subject__c FROM Support_Case__c WHERE Subject__c = :SUPPORT_CASE_NAME];
         Assert.areNotEqual(SUPPORT_CASE_NAME, testCase[0].Subject__c, 'The subject should be changed');
     }
+    /**
+     * Test that no duplicate follow-up task is created when case remains closed
+     */
+        @isTest
+    static void testCreateFollowUpTaskWhenCaseClosed() {
+        // Given
+        Support_Case__c testCase = [SELECT Id, Case_Number__c, Status__c, OwnerId, Subject__c FROM Support_Case__c WHERE Subject__c = :SUPPORT_CASE_NAME LIMIT 1];
+        
+        // Verify no tasks exist initially
+        List<Task> initialTasks = [SELECT Id FROM Task WHERE WhatId = :testCase.Id];
+        Assert.areEqual(0, initialTasks.size(), 'No tasks should exist initially');
+        
+        // When
+        Test.startTest();
+        testCase.Status__c = 'Resolved';
+        update testCase;
+        Test.stopTest();
+        
+        // Then
+        List<Task> followUpTasks = [
+            SELECT Id, Subject, Description, OwnerId, WhatId, ActivityDate, Priority, Status, Type
+            FROM Task 
+            WHERE WhatId = :testCase.Id
+        ];
+        
+        Assert.areEqual(1, followUpTasks.size(), 'One follow-up task should be created');
+        
+        Task createdTask = followUpTasks[0];
+        Assert.areEqual('Follow-up on Case: ' + testCase.Case_Number__c, createdTask.Subject, 'Task subject should match expected format');
+        Assert.areEqual(testCase.OwnerId, createdTask.OwnerId, 'Task should be assigned to case owner');
+        Assert.areEqual(testCase.Id, createdTask.WhatId, 'Task should be linked to the case');
+        Assert.areEqual(Date.today().addDays(2), createdTask.ActivityDate, 'Task due date should be 2 days from today');
+        Assert.areEqual('Normal', createdTask.Priority, 'Task priority should be Normal');
+        Assert.areEqual('Not Started', createdTask.Status, 'Task status should be Not Started');
+        Assert.areEqual('Follow-up', createdTask.Type, 'Task type should be Follow-up');
+        Assert.isTrue(createdTask.Description.contains(testCase.Case_Number__c), 'Task description should contain case number');
+        Assert.isTrue(createdTask.Description.contains(testCase.Subject__c), 'Task description should contain case subject');
+    }
+
+    /**
+     * Test that no follow-up task is created when case status doesn't change to closed
+     */
+    @isTest
+    static void testNoFollowUpTaskWhenCaseNotClosed() {
+        // Given
+        Support_Case__c testCase = [SELECT Id, Case_Number__c, Status__c FROM Support_Case__c WHERE Subject__c = :SUPPORT_CASE_NAME LIMIT 1];
+        
+        // When
+        Test.startTest();
+        testCase.Status__c = 'In progress'; // Change to non-closed status
+        update testCase;
+        Test.stopTest();
+        
+        // Then
+        List<Task> followUpTasks = [SELECT Id FROM Task WHERE WhatId = :testCase.Id];
+        Assert.areEqual(0, followUpTasks.size(), 'No follow-up task should be created when case is not closed');
+    }
+
+    /**
+     * Test that no duplicate follow-up task is created when case remains closed
+     */
+    @isTest
+    static void testNoDoubleFollowUpTaskWhenAlreadyClosed() {
+        // Given
+        Support_Case__c testCase = [SELECT Id, Case_Number__c, Status__c FROM Support_Case__c WHERE Subject__c = :SUPPORT_CASE_NAME LIMIT 1];
+        
+        // First close the case
+        testCase.Status__c = 'Resolved';
+        update testCase;
+        
+        // Verify one task was created
+        List<Task> initialTasks = [SELECT Id FROM Task WHERE WhatId = :testCase.Id];
+        Assert.areEqual(1, initialTasks.size(), 'One task should exist after first close');
+        
+        // When - update case again while already closed
+        Test.startTest();
+        testCase.Subject__c = 'Updated resolved case subject';
+        update testCase;
+        Test.stopTest();
+        
+        // Then
+        List<Task> finalTasks = [SELECT Id FROM Task WHERE WhatId = :testCase.Id];
+        Assert.areEqual(1, finalTasks.size(), 'Still only one task should exist - no duplicate created');
+    }
 }

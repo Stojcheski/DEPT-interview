@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingOwnerRules>
+        <fullName>Support_Managers_Group</fullName>
+        <accessLevel>Edit</accessLevel>
+        <description>Allow support managers to access all customer satisfation records regardless of ownership</description>
+        <label>Support Managers Group</label>
+        <sharedTo>
+            <group>Support_Managers_Group</group>
+        </sharedTo>
+        <sharedFrom>
+            <group>Support_Team_Member_Group</group>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

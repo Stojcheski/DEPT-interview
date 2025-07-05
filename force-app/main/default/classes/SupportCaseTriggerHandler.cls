@@ -77,10 +77,11 @@ public with sharing class SupportCaseTriggerHandler {
                 
                 caseRecord.First_Name__c = relatedContact.FirstName;
                 caseRecord.Last_Name__c = relatedContact.LastName;
-                // Since the requirement is: Should be auto populated with the Created Date, I assume it's meant only in insert scenarios
-                if(Trigger.isInsert){
+                // Since the requirement is: Should be auto populated with the Created Date, 
+                // I assume it's meant only in insert scenarios but I'm leaving it to work on update and insert for now
+                // if(Trigger.isInsert){
                     caseRecord.Start_date__c = Date.today(); 
-                }         
+                // }         
             }
         }
     }
@@ -162,6 +163,157 @@ public with sharing class SupportCaseTriggerHandler {
      * @param oldCaseMap Map of old Support Case records
      */
     public static void handleAfterUpdate(List<Support_Case__c> newCases, Map<Id, Support_Case__c> oldCaseMap) {
+        createFollowUpTasks(newCases, oldCaseMap);
+    }
+    /**
+     * Creates follow-up tasks for cases that are newly closed
+     * @param newCases List of updated Support Case records
+     * @param oldCaseMap Map of old Support Case records
+     */
+    private static void createFollowUpTasks(List<Support_Case__c> newCases, Map<Id, Support_Case__c> oldCaseMap) {
+        List<Task> followUpTasks = new List<Task>();
+        
+        for (Support_Case__c newCase : newCases) {
+            Support_Case__c oldCase = oldCaseMap.get(newCase.Id);
+            
+            if (newCase.Status__c == 'Resolved' && oldCase.Status__c != 'Resolved') {
+                
+                Task followUpTask = new Task();
+                followUpTask.Subject = 'Follow-up on Case: ' + newCase.Case_Number__c;
+                followUpTask.Description = 'Follow-up task for resolved case: ' + newCase.Case_Number__c + 
+                                        '\nCase Subject: ' + (String.isNotBlank(newCase.Subject__c) ? newCase.Subject__c : 'N/A') +
+                                        '\nCase resolved on: ' + Date.today().format();
+                followUpTask.OwnerId = newCase.OwnerId;
+                followUpTask.WhatId = newCase.Id;
+                followUpTask.ActivityDate = Date.today().addDays(2);
+                followUpTask.Priority = 'Normal';
+                followUpTask.Status = 'Not Started';
+                followUpTask.Type = 'Follow-up';
+                
+                followUpTasks.add(followUpTask);
+            }
+        }
+        
+        if (!followUpTasks.isEmpty()) {
+            try {
+                insert followUpTasks;
+            } catch (Exception e) {
+                System.debug('Error creating follow-up tasks: ' + e.getMessage());
+            }
+        }
+    }
+    /**
+     * @description Retrieves list of open support cases for the LWC component
+     * @return List<Support_Case__c> List of open cases with related data
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Support_Case__c> getCaseList() {
+        try {
+            return [
+                SELECT Id, Case_Number__c, Subject__c, Priority__c, Status__c, 
+                    CreatedDate, Contact__c, Contact__r.Name, Contact__r.Email,
+                    Account__c, Account__r.Name, Owner.Name, Description__c,
+                    Type__c, Impact__c, Case_Origin__c, Internal_Notes__c
+                FROM Support_Case__c 
+                WHERE Status__c IN ('New', 'Open', 'In Progress', 'Waiting on customer', 'On Hold')
+                ORDER BY CreatedDate DESC
+                LIMIT 1000
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException('Error retrieving case list: ' + e.getMessage());
+        }
+    }
 
+    /**
+     * @description Updates the status of a support case
+     * @param caseId The ID of the case to update
+     * @param newStatus The new status to set
+     */
+    @AuraEnabled
+    public static void updateCaseStatus(Id caseId, String newStatus) {
+        try {
+            // Validate input
+            if (caseId == null || String.isBlank(newStatus)) {
+                throw new AuraHandledException('Case ID and new status are required.');
+            }
+            
+            // Validate status value
+            List<String> validStatuses = new List<String>{
+                'New', 'Open', 'In Progress', 'Waiting on customer', 'Resolved', 'On Hold'
+            };
+            
+            if (!validStatuses.contains(newStatus)) {
+                throw new AuraHandledException('Invalid status value provided.');
+            }
+            
+            Support_Case__c caseToUpdate = new Support_Case__c(
+                Id = caseId,
+                Status__c = newStatus
+            );
+                        if (newStatus == 'Resolved') {
+                caseToUpdate.Close_Date__c = Date.today();
+            }
+            
+            update caseToUpdate;
+            
+        } catch (DmlException e) {
+            throw new AuraHandledException('Error updating case status: ' + e.getDmlMessage(0));
+        } catch (Exception e) {
+            throw new AuraHandledException('Error updating case status: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * @description Retrieves detailed information for a specific case
+     * @param caseId The ID of the case to retrieve
+     * @return Support_Case__c The case record with full details
+     */
+    @AuraEnabled(cacheable=true)
+    public static Support_Case__c getCaseDetails(Id caseId) {
+        try {
+            if (caseId == null) {
+                throw new AuraHandledException('Case ID is required.');
+            }
+            
+            return [
+                SELECT Id, Case_Number__c, Subject__c, Priority__c, Status__c, 
+                    CreatedDate, Close_Date__c, Start_Date__c, Contact__c, 
+                    Contact__r.Name, Contact__r.Email, Contact__r.Phone,
+                    Account__c, Account__r.Name, Owner.Name, Description__c,
+                    Type__c, Impact__c, Case_Origin__c, Internal_Notes__c,
+                    First_Name__c, Last_Name__c, Email__c, Phone__c, Address__c
+                FROM Support_Case__c 
+                WHERE Id = :caseId
+                LIMIT 1
+            ];
+        } catch (QueryException e) {
+            throw new AuraHandledException('Case not found.');
+        } catch (Exception e) {
+            throw new AuraHandledException('Error retrieving case details: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * @description Retrieves cases assigned to the current user
+     * @return List<Support_Case__c> List of cases assigned to current user
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Support_Case__c> getMyCases() {
+        try {
+            Id currentUserId = UserInfo.getUserId();
+            
+            return [
+                SELECT Id, Case_Number__c, Subject__c, Priority__c, Status__c, 
+                    CreatedDate, Contact__c, Contact__r.Name, Contact__r.Email,
+                    Account__c, Account__r.Name, Description__c, Type__c, Impact__c
+                FROM Support_Case__c 
+                WHERE OwnerId = :currentUserId
+                AND Status__c IN ('New', 'Open', 'In Progress', 'Waiting on customer', 'On Hold')
+                ORDER BY Priority__c DESC, CreatedDate DESC
+                LIMIT 500
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException('Error retrieving your cases: ' + e.getMessage());
+        }
     }
 }

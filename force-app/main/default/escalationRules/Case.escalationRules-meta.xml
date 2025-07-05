@@ -1,37 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EscalationRules xmlns="http://soap.sforce.com/2006/04/metadata">
     <escalationRule>
-        <fullName>Escalate Support Cases</fullName>
+        <fullName>Escalate Cases</fullName>
         <active>true</active>
         <ruleEntry>
             <businessHours>Default</businessHours>
             <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>High</value>
+            </criteriaItems>
+            <escalationAction>
+                <assignedTo>Support_Case_Queue</assignedTo>
+                <assignedToType>Queue</assignedToType>
+                <minutesToEscalation>720</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyEmail>jos.vervoorn@deptagency.com</notifyEmail>
+                <notifyTo>bheki.sigelagelani@deptagency.com</notifyTo>
+                <notifyToTemplate>unfiled$public/Support_Case_Escalation_Template</notifyToTemplate>
+            </escalationAction>
             <escalationStartTime>CaseCreation</escalationStartTime>
-            <formula>AND(
-  ISPICKVAL(Priority, &quot;High&quot;),
-  NOT(ISPICKVAL(Status, &quot;Closed&quot;)),
-  (NOW() - CreatedDate) * 24 &gt;= 12
-)</formula>
         </ruleEntry>
         <ruleEntry>
             <businessHours>Default</businessHours>
             <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Medium</value>
+            </criteriaItems>
+            <escalationAction>
+                <assignedTo>Support_Case_Queue</assignedTo>
+                <assignedToType>Queue</assignedToType>
+                <minutesToEscalation>1440</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyEmail>jos.vervoorn@deptagency.com</notifyEmail>
+                <notifyTo>bheki.sigelagelani@deptagency.com</notifyTo>
+                <notifyToTemplate>unfiled$public/Support_Case_Escalation_Template</notifyToTemplate>
+            </escalationAction>
             <escalationStartTime>CaseCreation</escalationStartTime>
-            <formula>AND(
-  ISPICKVAL(Priority, &quot;Medium&quot;),
-  NOT(ISPICKVAL(Status, &quot;Closed&quot;)),
-  (NOW() - CreatedDate) * 24 &gt;= 24
-)</formula>
         </ruleEntry>
         <ruleEntry>
             <businessHours>Default</businessHours>
             <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Low</value>
+            </criteriaItems>
+            <escalationAction>
+                <assignedTo>Support_Case_Queue</assignedTo>
+                <assignedToType>Queue</assignedToType>
+                <minutesToEscalation>2880</minutesToEscalation>
+                <notifyCaseOwner>true</notifyCaseOwner>
+                <notifyEmail>jos.vervoorn@deptagency.com</notifyEmail>
+                <notifyTo>bheki.sigelagelani@deptagency.com</notifyTo>
+                <notifyToTemplate>unfiled$public/Support_Case_Escalation_Template</notifyToTemplate>
+            </escalationAction>
             <escalationStartTime>CaseCreation</escalationStartTime>
-            <formula>AND(
-  ISPICKVAL(Priority, &quot;Low&quot;),
-  NOT(ISPICKVAL(Status, &quot;Closed&quot;)),
-  (NOW() - CreatedDate) * 24 &gt;= 48
-)</formula>
         </ruleEntry>
     </escalationRule>
 </EscalationRules>

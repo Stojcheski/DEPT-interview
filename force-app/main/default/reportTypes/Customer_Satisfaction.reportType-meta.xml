@@ -1,0 +1,30 @@
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>Customer_Satisfaction__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Basic Customer Satisfaction report</description>
+    <label>Customer Satisfaction</label>
+    <sections>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Id</field>
+            <table>Customer_Satisfaction__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Name</field>
+            <table>Customer_Satisfaction__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Rating__c</field>
+            <table>Customer_Satisfaction__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>CreatedDate</field>
+            <table>Customer_Satisfaction__c</table>
+        </columns>
+        <masterLabel>Customer Satisfaction Fields</masterLabel>
+    </sections>
+</ReportType>
